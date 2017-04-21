@@ -18,7 +18,7 @@ Setup your environment:
 module swap PrgEnv-cray PrgEnv-gnu
 module swap gcc gcc/6.1.0 
 module swap cray-libsci cray-libsci/16.09.1
-module load python-compute/3.6.0
+module load python-compute/3.6.0_gcc6.1.0
 module unload xalt
 ```
 
