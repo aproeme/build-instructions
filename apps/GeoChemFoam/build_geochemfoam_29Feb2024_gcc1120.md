@@ -42,25 +42,48 @@ to read
    
 We also change one further line, namely line #4, from
 
-   `GCFOAM_DIR=$HOME/works/GeoChemFoam-5.0
+   ```bash
+   GCFOAM_DIR=$HOME/works/GeoChemFoam-5.0
+   ```
 
 to read
 
-   `GCFOAM_DIR=/work/y23/y23/gavingcfmod/works/GeoChemFoam-5.0
+   ```bash
+   GCFOAM_DIR=/work/y23/shared/gcfoam/GeoChemFoam-5.0
+   ```
 
 Compile CPL_APP_OPENFOAM applications with make
 -----------------------------------------------
-Run make:
+First, souce the GeoChemFoam bashrc file:
 
-  ```
+   ```bash
+    source /work/y23/shared/gcfoam/GeoChemFoam-5.0/etc/bashrc
+   ```
+
+then run make:
+
+   ```bash
   ./Allwmake
   ./checkInstall.sh
   ```
 
 where checkInstall.sh will generate the message
 
+   ```bash
   `Installation successful`
+   ```
 
 The make process can be quite verbose: all warnings can be safely ignored.
 
+Create local module-related bashrc
+----------------------------------
+Lastly, create a file named $GCFOAM_DIR/etc/bashrc_archer2 with the following contents
+
+   ```bash
+   # .bashrc
+   source $FOAM_INSTALL_DIR/etc/bashrc
+   source $GCFOAM_DIR/ThirdParty/bashrc
+   ```
+
+which is required by batch scripts that employ this central installation.
 

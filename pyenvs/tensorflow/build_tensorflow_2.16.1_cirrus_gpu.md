@@ -1,7 +1,7 @@
-Instructions for installing TensorFlow 2.15.0 for Cirrus GPU nodes
+Instructions for installing TensorFlow 2.16.1 for Cirrus GPU nodes
 ==================================================================
 
-These instructions show how to install TensorFlow 2.15.0 for use on the Cirrus GPU nodes (Cascade Lake, NVIDIA Tesla V100-SXM2-16GB).
+These instructions show how to install TensorFlow 2.16.1 for use on the Cirrus GPU nodes (Cascade Lake, NVIDIA Tesla V100-SXM2-16GB).
 
 Horovod 0.28.1, a distributed deep learning training framework, is also installed - this package is required
 for running TensorFlow across multiple compute nodes.
@@ -15,14 +15,14 @@ PRFX=/path/to/work  # e.g., PRFX=/work/y07/shared/cirrus-software
 cd ${PRFX}
 
 TENSORFLOW_LABEL=tensorflow
-TENSORFLOW_VERSION=2.15.0
+TENSORFLOW_VERSION=2.16.1
 TENSORFLOW_ROOT=${PRFX}/${TENSORFLOW_LABEL}
 
-CUDA_VERSION=11.6
-CUDNN_VERSION=8.6.0-cuda-${CUDA_VERSION}
-TENSORRT_VERSION=8.4.3.1-u2
+CUDA_VERSION=12.4
+CUDNN_VERSION=9.2.0-cuda-${CUDA_VERSION}
+TENSORRT_VERSION=10.0.1.6
 
-module load python/3.10.8-gpu
+module load python/3.12.1-gpu
 module load nvidia/cudnn/${CUDNN_VERSION}
 module load nvidia/tensorrt/${TENSORRT_VERSION}
 
@@ -99,11 +99,11 @@ Create `extend-venv-activate` script
 ------------------------------------
 
 The TensorFlow Python environment described here is encapsulated as a TCL module file on Cirrus.
-A user may build a local Python environment based on this module, `tensorflow/2.15.0-gpu`, which
+A user may build a local Python environment based on this module, `tensorflow/2.16.1-gpu`, which
 means that module must be loaded whenever the local environment is activated.
 
 The `extend-venv-activate` script ensures that this happens: it modifies the local environment's
-activate script such that the `tensorflow/2.15.0-gpu` module is loaded during activation and unloaded
+activate script such that the `tensorflow/2.16.1-gpu` module is loaded during activation and unloaded
 during deactivation.
 
 The contents of the `extend-venv-activate` script are shown below. The file itself must be added
@@ -115,7 +115,11 @@ to the `${PYTHON_BIN}` directory.
 # add extra activate commands
 MARK="# you cannot run it directly"
 CMDS="${MARK}\n\n"
-CMDS="${CMDS}module -s load tensorflow/2.15.0-gpu\n"
+CMDS="${CMDS}module -s load tensorflow/2.16.1-gpu\n\n"
+CMDS="${CMDS}PYTHONUSERSITEPKGS=${1}/lib/\${MINICONDA3_PYTHON_LABEL}/site-packages\n"
+CMDS="${CMDS}if [[ \${PYTHONPATH} != *\"\${PYTHONUSERSITEPKGS}\"* ]]; then\n"
+CMDS="${CMDS}  export PYTHONPATH=\${PYTHONUSERSITEPKGS}\:\${PYTHONPATH}\n"
+CMDS="${CMDS}fi\n\n"
 
 sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 
@@ -124,7 +128,8 @@ sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 INDENT="        "
 MARK="unset -f deactivate"
 CMDS="${MARK}\n\n"
-CMDS="${CMDS}${INDENT}module -s unload tensorflow/2.15.0-gpu"
+CMDS="${CMDS}${INDENT}export PYTHONPATH=\`echo \${PYTHONPATH} | sed \"\s\:\${PYTHONUSERSITEPKGS}\\\\\:\:\:\g\"\`\n"
+CMDS="${CMDS}${INDENT}module -s unload tensorflow/2.16.1-gpu"
 
 sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 ```

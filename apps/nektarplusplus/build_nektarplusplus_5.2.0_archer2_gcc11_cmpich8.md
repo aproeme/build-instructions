@@ -9,7 +9,7 @@ Setup initial environment
 -------------------------
 
 ```bash
-PRFX=/path/to/work
+PRFX=/path/to/work  # e.g., PRFX=/work/y07/shared/apps/core
 NEKTAR_VERSION=5.2.0
 NEKTAR_LABEL=nektar
 NEKTAR_ARCHIVE=${NEKTAR_LABEL}-v${NEKTAR_VERSION}.tar.gz
@@ -40,7 +40,7 @@ Switch to the GNU Programming Environment
 ```bash
 export CRAY_ADD_RPATH=yes
 
-module -q load cpe/21.09
+module -q load cpe/22.12
 module -q load PrgEnv-gnu
 module -q load cmake
 ```
@@ -60,7 +60,7 @@ CC=cc CXX=CC cmake -DNEKTAR_USE_MPI=ON -DNEKTAR_USE_HDF5=ON -DNEKTAR_USE_FFTW=ON
     -DTHIRDPARTY_BUILD_BOOST=ON -DTHIRDPARTY_BUILD_HDF5=ON -DTHIRDPARTY_BUILD_FFTW=ON \
     -DNEKTAR_BUILD_UNIT_TESTS=OFF -DCMAKE_INSTALL_PREFIX=${INSTALL_ROOT} ..
 
-make -j 4 install
+make -j 8 install
 make clean
 ```
 

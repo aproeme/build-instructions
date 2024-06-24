@@ -1,7 +1,7 @@
-Instructions for installing TensorFlow 2.15.0 for Cirrus CPU nodes
+Instructions for installing TensorFlow 2.16.1 for Cirrus CPU nodes
 ==================================================================
 
-These instructions show how to install TensorFlow 2.15.0 for use on the Cirrus CPU nodes (Intel Xeon E5-2695, Broadwell).
+These instructions show how to install TensorFlow 2.16.1 for use on the Cirrus CPU nodes (Intel Xeon E5-2695, Broadwell).
 
 Horovod 0.28.1, a distributed deep learning training framework, is also installed - this package is required
 for running TensorFlow across multiple compute nodes.
@@ -15,10 +15,10 @@ PRFX=/path/to/work  # e.g., PRFX=/work/y07/shared/cirrus-software
 cd ${PRFX}
 
 TENSORFLOW_LABEL=tensorflow
-TENSORFLOW_VERSION=2.15.0
+TENSORFLOW_VERSION=2.16.1
 TENSORFLOW_ROOT=${PRFX}/${TENSORFLOW_LABEL}
 
-module load python/3.9.13
+module load python/3.12.1
 
 PYTHON_VER=`echo ${MINICONDA3_PYTHON_VERSION} | cut -d'.' -f1-2`
 PYTHON_DIR=${PRFX}/${TENSORFLOW_LABEL}/${TENSORFLOW_VERSION}/python
@@ -90,11 +90,11 @@ Create `extend-venv-activate` script
 ------------------------------------
 
 The TensorFlow Python environment described here is encapsulated as a TCL module file on Cirrus.
-A user may build a local Python environment based on this module, `tensorflow/2.15.0`, which
+A user may build a local Python environment based on this module, `tensorflow/2.16.1`, which
 means that module must be loaded whenever the local environment is activated.
 
 The `extend-venv-activate` script ensures that this happens: it modifies the local environment's
-activate script such that the `tensorflow/2.15.0` module is loaded during activation and unloaded
+activate script such that the `tensorflow/2.16.1` module is loaded during activation and unloaded
 during deactivation.
 
 The contents of the `extend-venv-activate` script are shown below. The file itself must be added
@@ -105,8 +105,12 @@ to the `${PYTHON_BIN}` directory.
 
 # add extra activate commands
 MARK="# you cannot run it directly"
-CMDS="${MARK}\n\n"
-CMDS="${CMDS}module -s load tensorflow/2.15.0\n"
+CMDS="${MARK}\n\n"  
+CMDS="${CMDS}module -s load tensorflow/2.16.1\n\n"
+CMDS="${CMDS}PYTHONUSERSITEPKGS=${1}/lib/\${MINICONDA3_PYTHON_LABEL}/site-packages\n"
+CMDS="${CMDS}if [[ \${PYTHONPATH} != *\"\${PYTHONUSERSITEPKGS}\"* ]]; then\n"
+CMDS="${CMDS}  export PYTHONPATH=\${PYTHONUSERSITEPKGS}\:\${PYTHONPATH}\n"
+CMDS="${CMDS}fi\n\n"
 
 sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 
@@ -115,7 +119,8 @@ sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 INDENT="        "
 MARK="unset -f deactivate"
 CMDS="${MARK}\n\n"
-CMDS="${CMDS}${INDENT}module -s unload tensorflow/2.15.0"
+CMDS="${CMDS}${INDENT}export PYTHONPATH=\`echo \${PYTHONPATH} | sed \"\s\:\${PYTHONUSERSITEPKGS}\\\\\:\:\:\g\"\`\n"
+CMDS="${CMDS}${INDENT}module -s unload tensorflow/2.16.1"
 
 sed -ri "s:${MARK}:${CMDS}:g" ${1}/bin/activate
 ```

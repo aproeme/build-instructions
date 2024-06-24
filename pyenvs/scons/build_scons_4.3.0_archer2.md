@@ -8,11 +8,12 @@ Setup initial environment
 -------------------------
 
 ```bash
-PRFX=/path/to/work
+PRFX=/path/to/work  # e.g., PRFX=/work/y07/shared/python/core
 SCONS_LABEL=scons
 SCONS_VERSION=4.3.0
 SCONS_ROOT=${PRFX}/${SCONS_LABEL}
 
+module load PrgEnv-gnu
 module load cray-python
 
 PYTHON_VER=`echo ${CRAY_PYTHON_LEVEL} | cut -d'.' -f1-2`
@@ -43,7 +44,6 @@ Install the SCons together with supporting packages
 ---------------------------------------------------
 
 ```bash
-pip install --user pygdc
 pip install --user ninja
 pip install --user latex
 pip install --user ${SCONS_LABEL}==${SCONS_VERSION}
