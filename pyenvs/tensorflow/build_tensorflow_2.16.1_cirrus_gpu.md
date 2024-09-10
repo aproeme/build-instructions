@@ -19,8 +19,8 @@ TENSORFLOW_VERSION=2.16.1
 TENSORFLOW_ROOT=${PRFX}/${TENSORFLOW_LABEL}
 
 CUDA_VERSION=12.4
-CUDNN_VERSION=9.2.0-cuda-${CUDA_VERSION}
-TENSORRT_VERSION=10.0.1.6
+CUDNN_VERSION=8.9.7-cuda-${CUDA_VERSION}
+TENSORRT_VERSION=8.6.1.6
 
 module load python/3.12.1-gpu
 module load nvidia/cudnn/${CUDNN_VERSION}
@@ -113,7 +113,7 @@ to the `${PYTHON_BIN}` directory.
 #!/bin/bash
   
 # add extra activate commands
-MARK="# you cannot run it directly"
+MARK="# You cannot run it directly"
 CMDS="${MARK}\n\n"
 CMDS="${CMDS}module -s load tensorflow/2.16.1-gpu\n\n"
 CMDS="${CMDS}PYTHONUSERSITEPKGS=${1}/lib/\${MINICONDA3_PYTHON_LABEL}/site-packages\n"
